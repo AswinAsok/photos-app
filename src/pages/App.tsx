@@ -3,10 +3,10 @@
 import { Activity, useState } from 'react';
 import { useFileSystem } from '../hooks/useFileSystem';
 import styles from './App.module.css';
-import { FileSelector, PhotoGrid, PhotoViewer } from '../components';
+import { FileSelector, PhotoGrid, PhotoViewer, ProgressIndicator } from '../components';
 
 const App = () => {
-  const { photos, isLoading, selectDirectory, selectFiles, clearPhotos } = useFileSystem();
+  const { photos, isLoading, progress, selectDirectory, selectFiles, clearPhotos } = useFileSystem();
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
 
   const handlePhotoClick = (index: number) => {
@@ -50,6 +50,9 @@ const App = () => {
       {viewerIndex !== null && (
         <PhotoViewer photos={photos} currentIndex={viewerIndex} onClose={handleCloseViewer} />
       )}
+
+      {/* Progress Indicator */}
+      <ProgressIndicator progress={progress} />
     </div>
   );
 };

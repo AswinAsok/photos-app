@@ -5,9 +5,55 @@ import toast from 'react-hot-toast';
 import type { PhotoFile } from '../types';
 import { isImageFile, createPhotoFile, cleanupPhotoUrls } from '../utils/fileUtils';
 
+export interface LoadingProgress {
+  current: number;
+  total: number;
+  isLoading: boolean;
+}
+
+const BATCH_SIZE = 20;
+
 export const useFileSystem = () => {
   const [photos, setPhotos] = useState<PhotoFile[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState<LoadingProgress>({
+    current: 0,
+    total: 0,
+    isLoading: false,
+  });
+
+  const processBatches = useCallback(
+    async (imageFiles: File[]) => {
+      const totalImages = imageFiles.length;
+      setProgress({ current: 0, total: totalImages, isLoading: true });
+
+      const allPhotoFiles: PhotoFile[] = [];
+
+      // Process images in batches
+      for (let i = 0; i < imageFiles.length; i += BATCH_SIZE) {
+        const batch = imageFiles.slice(i, i + BATCH_SIZE);
+        const batchPhotos = await Promise.all(batch.map((file) => createPhotoFile(file)));
+
+        allPhotoFiles.push(...batchPhotos);
+
+        // Update photos state incrementally to show progress
+        setPhotos((prev) => [...prev, ...batchPhotos]);
+
+        // Update progress
+        setProgress({
+          current: Math.min(i + BATCH_SIZE, totalImages),
+          total: totalImages,
+          isLoading: i + BATCH_SIZE < totalImages,
+        });
+      }
+
+      // Final progress update
+      setProgress({ current: totalImages, total: totalImages, isLoading: false });
+
+      return allPhotoFiles;
+    },
+    [],
+  );
 
   const selectDirectory = useCallback(async () => {
     try {
@@ -66,10 +112,12 @@ export const useFileSystem = () => {
       // Cleanup previous photos
       cleanupPhotoUrls(photos);
 
-      // Create photo objects
-      const photoFiles = await Promise.all(imageFiles.map((file) => createPhotoFile(file)));
+      // Clear photos before loading new ones
+      setPhotos([]);
 
-      setPhotos(photoFiles);
+      // Process images in batches
+      const photoFiles = await processBatches(imageFiles);
+
       toast.success(`Loaded ${photoFiles.length} image${photoFiles.length > 1 ? 's' : ''}`);
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
@@ -79,7 +127,7 @@ export const useFileSystem = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [photos]);
+  }, [photos, processBatches]);
 
   const selectFiles = useCallback(
     async (files: FileList | null) => {
@@ -107,10 +155,12 @@ export const useFileSystem = () => {
         // Cleanup previous photos
         cleanupPhotoUrls(photos);
 
-        // Create photo objects
-        const photoFiles = await Promise.all(imageFiles.map((file) => createPhotoFile(file)));
+        // Clear photos before loading new ones
+        setPhotos([]);
 
-        setPhotos(photoFiles);
+        // Process images in batches
+        const photoFiles = await processBatches(imageFiles);
+
         toast.success(`Loaded ${photoFiles.length} image${photoFiles.length > 1 ? 's' : ''}`);
       } catch (error) {
         console.error('Error loading files:', error);
@@ -119,17 +169,19 @@ export const useFileSystem = () => {
         setIsLoading(false);
       }
     },
-    [photos],
+    [photos, processBatches],
   );
 
   const clearPhotos = useCallback(() => {
     cleanupPhotoUrls(photos);
     setPhotos([]);
+    setProgress({ current: 0, total: 0, isLoading: false });
   }, [photos]);
 
   return {
     photos,
     isLoading,
+    progress,
     selectDirectory,
     selectFiles,
     clearPhotos,
