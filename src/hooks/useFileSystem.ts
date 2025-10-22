@@ -12,7 +12,7 @@ export interface LoadingProgress {
   isLoading: boolean;
 }
 
-const BATCH_SIZE = 20;
+const BATCH_SIZE = Infinity;
 
 export const useFileSystem = () => {
   const [photos, setPhotos] = useState<PhotoFile[]>([]);
