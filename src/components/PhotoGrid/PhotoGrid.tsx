@@ -1,11 +1,8 @@
-// PhotoGrid component following Single Responsibility Principle
-
-import { useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import styles from './PhotoGrid.module.css';
 import type { PhotoFile } from '../../types';
-import { cn } from '../../utils/cn';
+import { cn } from '../../utils';
 
 interface PhotoGridProps {
   photos: PhotoFile[];
@@ -14,23 +11,12 @@ interface PhotoGridProps {
 }
 
 export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProps) => {
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    // Reset loaded images when photos change
-    setLoadedImages(new Set());
-  }, [photos]);
-
-  const handleImageLoad = (photoId: string) => {
-    setLoadedImages((prev) => new Set(prev).add(photoId));
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.grid}>
         {photos.map((photo, index) => (
           <div key={photo.id} className={styles.gridItem} onClick={() => onPhotoClick(index)}>
-            {!loadedImages.has(photo.id) && (
+            {!photo.isLoaded && (
               <div className={styles.skeletonWrapper}>
                 <Skeleton
                   height='100%'
@@ -43,9 +29,8 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProp
             <img
               src={photo.url}
               alt={photo.name}
-              className={cn(styles.image, { [styles.loaded]: loadedImages.has(photo.id) })}
+              className={cn(styles.image, { [styles.loaded]: photo.isLoaded })}
               loading='lazy'
-              onLoad={() => handleImageLoad(photo.id)}
             />
           </div>
         ))}

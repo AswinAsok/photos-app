@@ -22,38 +22,35 @@ export const useFileSystem = () => {
     isLoading: false,
   });
 
-  const processBatches = useCallback(
-    async (imageFiles: File[]) => {
-      const totalImages = imageFiles.length;
-      setProgress({ current: 0, total: totalImages, isLoading: true });
+  const processBatches = useCallback(async (imageFiles: File[]) => {
+    const totalImages = imageFiles.length;
+    setProgress({ current: 0, total: totalImages, isLoading: true });
 
-      const allPhotoFiles: PhotoFile[] = [];
+    const allPhotoFiles: PhotoFile[] = [];
 
-      // Process images in batches
-      for (let i = 0; i < imageFiles.length; i += BATCH_SIZE) {
-        const batch = imageFiles.slice(i, i + BATCH_SIZE);
-        const batchPhotos = await Promise.all(batch.map((file) => createPhotoFile(file)));
+    // Process images in batches
+    for (let i = 0; i < imageFiles.length; i += BATCH_SIZE) {
+      const batch = imageFiles.slice(i, i + BATCH_SIZE);
+      const batchPhotos = await Promise.all(batch.map((file) => createPhotoFile(file)));
 
-        allPhotoFiles.push(...batchPhotos);
+      allPhotoFiles.push(...batchPhotos);
 
-        // Update photos state incrementally to show progress
-        setPhotos((prev) => [...prev, ...batchPhotos]);
+      // Update photos state incrementally to show progress
+      setPhotos((prev) => [...prev, ...batchPhotos]);
 
-        // Update progress
-        setProgress({
-          current: Math.min(i + BATCH_SIZE, totalImages),
-          total: totalImages,
-          isLoading: i + BATCH_SIZE < totalImages,
-        });
-      }
+      // Update progress
+      setProgress({
+        current: Math.min(i + BATCH_SIZE, totalImages),
+        total: totalImages,
+        isLoading: i + BATCH_SIZE < totalImages,
+      });
+    }
 
-      // Final progress update
-      setProgress({ current: totalImages, total: totalImages, isLoading: false });
+    // Final progress update
+    setProgress({ current: totalImages, total: totalImages, isLoading: false });
 
-      return allPhotoFiles;
-    },
-    [],
-  );
+    return allPhotoFiles;
+  }, []);
 
   const selectDirectory = useCallback(async () => {
     try {
@@ -76,9 +73,7 @@ export const useFileSystem = () => {
       for await (const entry of dirHandle.values()) {
         if (entry.kind === 'file') {
           totalFiles++;
-          console.log(entry);
           const file = await entry.getFile();
-          console.log(entry.getFile);
           if (isImageFile(file)) {
             imageFiles.push(file);
           } else {

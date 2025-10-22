@@ -54,11 +54,11 @@ export const FileSelector = ({
             </button>
 
             <button
-              className={cn(styles.button, styles.buttonSecondary)}
+              className={cn(styles.button, styles.buttonSecondary, styles.buttonRow)}
               onClick={handleSelectFilesClick}
               disabled={isLoading}
             >
-              Select Files
+              Select Files {isLoading && <MoonLoader color='black' size={15} />}
             </button>
           </div>
 

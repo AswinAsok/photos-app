@@ -10,6 +10,7 @@ export interface PhotoFile {
   size: number;
   type: string;
   lastModified: number;
+  isLoaded: boolean;
 }
 
 export interface PhotoMetadata {

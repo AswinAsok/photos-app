@@ -66,6 +66,7 @@ export const createPhotoFile = async (file: File): Promise<PhotoFile> => {
     size: file.size,
     type: file.type,
     lastModified: file.lastModified,
+    isLoaded: true,
   };
 };
 
