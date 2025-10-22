@@ -33,7 +33,7 @@ export const PhotoHeader = memo(
         <div className={styles.headerContent}>
           <div className={styles.titleSection}>
             <h2 className={styles.title}>{title}</h2>
-            {folders && folders.length > 0 && (
+            {folders && folders.length > 1 && (
               <BreadcrumbNavigation folders={folders} onFolderClick={onFolderClick} />
             )}
           </div>

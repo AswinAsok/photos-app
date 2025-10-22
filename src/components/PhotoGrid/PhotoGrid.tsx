@@ -170,8 +170,8 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos, folders }: Phot
     return null;
   }
 
-  // Render folders with accordions
-  if (folderStates && folderStates.length > 0) {
+  // Render folders with accordions (only if more than 1 folder)
+  if (folderStates && folderStates.length > 1) {
     return (
       <div className={styles.container}>
         <PhotoHeader
