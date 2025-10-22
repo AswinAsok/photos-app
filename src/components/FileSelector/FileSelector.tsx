@@ -1,6 +1,6 @@
 // FileSelector component following Single Responsibility Principle
 
-import { useRef } from 'react';
+import { useRef, useEffect, useState, Activity } from 'react';
 import { MoonLoader } from 'react-spinners';
 import styles from './FileSelector.module.css';
 import { cn } from '../../utils/cn';
@@ -17,6 +17,12 @@ export const FileSelector = ({
   isLoadingDirectory,
 }: FileSelectorProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isApiAvailable, setIsApiAvailable] = useState(false);
+
+  useEffect(() => {
+    // Check if File System Access API is available
+    setIsApiAvailable('showDirectoryPicker' in window);
+  }, []);
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSelectFiles(e.target.files);
@@ -48,7 +54,7 @@ export const FileSelector = ({
             <button
               className={cn(styles.button, styles.buttonPrimary, styles.buttonRow)}
               onClick={onSelectDirectory}
-              disabled={isLoadingDirectory}
+              disabled={isLoadingDirectory || !isApiAvailable}
             >
               {isLoadingDirectory ? <MoonLoader size={20} color='#ffffff' /> : 'Select Folder'}
             </button>
@@ -71,6 +77,32 @@ export const FileSelector = ({
           />
         </div>
       </main>
+
+      <Activity mode={!isApiAvailable ? 'visible' : 'hidden'}>
+        <div
+          className={cn(
+            styles.apiPill,
+            isApiAvailable ? styles.apiAvailable : styles.apiUnavailable,
+          )}
+          title={
+            isApiAvailable
+              ? 'File System Access API is available'
+              : 'File System Access API is not available in this browser. Try using Chrome, Edge, or Opera with the feature enabled in browser settings.'
+          }
+        >
+          <div>
+            <span className={styles.apiDot}></span>
+            <span className={styles.apiText}>
+              {isApiAvailable ? 'File System Access API' : 'File System Access API Unavailable'}
+            </span>
+          </div>
+          {!isApiAvailable && (
+            <span className={styles.apiNote}>
+              Enable in browser settings for full folder access
+            </span>
+          )}
+        </div>
+      </Activity>
     </div>
   );
 };

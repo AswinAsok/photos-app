@@ -6,4 +6,4 @@ And now the obvious part: this currently working prototype has been built mostly
 
 and finally, here is it [https://ente-alla.vercel.app/](https://ente-alla.vercel.app/)
 
-p.s. upon my current load test the app works like a charm till the 12000 mark photos, beyond that the call stack fails, and solution would be ig to add a pagination if the photos for a single folder is more than say some 5000, and we can presumable put that too in the page header so its accessible to the user.
+p.s. upon my current load test the app works like a charm till the 12000 mark photos, beyond that the call stack fails, and solution would be ig to add a pagination if the photos for a single folder is more than say some 5000, and we can put that too in the page header so its accessible to the user.
