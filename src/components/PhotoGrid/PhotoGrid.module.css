@@ -39,7 +39,7 @@
 }
 
 .clearButton:hover {
-  background: #00975F;
+  background: #00975f;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 168, 107, 0.35);
 }
@@ -113,31 +113,20 @@
   opacity: 1;
 }
 
-.placeholder {
+.skeletonWrapper {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: 1;
+}
+
+.skeletonContainer {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--gray-100);
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--gray-200);
-  border-top-color: var(--primary-green);
-  border-radius: var(--radius-full);
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* Custom scrollbar */

@@ -1,6 +1,8 @@
 // PhotoGrid component following Single Responsibility Principle
 
 import { useState, useEffect } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import styles from './PhotoGrid.module.css';
 import type { PhotoFile } from '../../types';
 
@@ -27,6 +29,16 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProp
       <div className={styles.grid}>
         {photos.map((photo, index) => (
           <div key={photo.id} className={styles.gridItem} onClick={() => onPhotoClick(index)}>
+            {!loadedImages.has(photo.id) && (
+              <div className={styles.skeletonWrapper}>
+                <Skeleton
+                  height='100%'
+                  width='100%'
+                  borderRadius='var(--radius-xl)'
+                  containerClassName={styles.skeletonContainer}
+                />
+              </div>
+            )}
             <img
               src={photo.url}
               alt={photo.name}
@@ -34,11 +46,6 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProp
               loading='lazy'
               onLoad={() => handleImageLoad(photo.id)}
             />
-            {!loadedImages.has(photo.id) && (
-              <div className={styles.placeholder}>
-                <div className={styles.spinner}></div>
-              </div>
-            )}
           </div>
         ))}
       </div>
