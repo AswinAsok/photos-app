@@ -1,8 +1,10 @@
 // PhotoViewer component following Single Responsibility Principle
+// Now uses keyboard navigation hook for better separation of concerns
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import type { PhotoFile } from '../../types';
 import { getPhotoMetadata } from '../../utils/fileUtils';
+import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import styles from './PhotoViewer.module.css';
 import { cn } from '../../utils/cn';
 
@@ -27,28 +29,16 @@ export const PhotoViewer = ({ photos, currentIndex, onClose }: PhotoViewerProps)
     setIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
   }, [photos.length]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case 'Escape':
-          onClose();
-          break;
-        case 'ArrowLeft':
-          navigatePrev();
-          break;
-        case 'ArrowRight':
-          navigateNext();
-          break;
-        case 'i':
-        case 'I':
-          setShowMetadata((prev) => !prev);
-          break;
-      }
-    };
+  const toggleMetadata = useCallback(() => {
+    setShowMetadata((prev) => !prev);
+  }, []);
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose, navigatePrev, navigateNext]);
+  useKeyboardNavigation({
+    onEscape: onClose,
+    onArrowLeft: navigatePrev,
+    onArrowRight: navigateNext,
+    onKeyI: toggleMetadata,
+  });
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
@@ -82,11 +72,7 @@ export const PhotoViewer = ({ photos, currentIndex, onClose }: PhotoViewerProps)
         <img src={currentPhoto.url} alt={currentPhoto.name} className={styles.image} />
       </div>
 
-      <button
-        className={styles.infoButton}
-        onClick={() => setShowMetadata((prev) => !prev)}
-        title='Toggle metadata (I)'
-      >
+      <button className={styles.infoButton} onClick={toggleMetadata} title='Toggle metadata (I)'>
         i
       </button>
 

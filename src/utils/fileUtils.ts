@@ -10,7 +10,6 @@ const SUPPORTED_IMAGE_TYPES = [
   'image/webp',
   'image/svg+xml',
 ];
-
 export const isImageFile = (file: File): boolean => {
   return SUPPORTED_IMAGE_TYPES.includes(file.type);
 };

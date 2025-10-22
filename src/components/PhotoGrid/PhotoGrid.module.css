@@ -62,7 +62,6 @@
 /* Masonry grid container */
 .masonryGrid {
   display: flex;
-  margin-left: calc(var(--space-4) * -1);
   width: auto;
 }
 

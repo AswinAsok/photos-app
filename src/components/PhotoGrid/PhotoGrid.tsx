@@ -19,7 +19,6 @@ interface PhotoItemProps {
   onImageLoad: (id: string) => void;
 }
 
-// Memoized photo item to prevent unnecessary re-renders
 const PhotoItem = memo(({ photo, index, onPhotoClick, isLoaded, onImageLoad }: PhotoItemProps) => {
   return (
     <div className={styles.gridItem} onClick={() => onPhotoClick(index)}>

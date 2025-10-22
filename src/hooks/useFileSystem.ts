@@ -1,9 +1,10 @@
 // Custom hook following Dependency Inversion Principle
+// Now uses injected services instead of direct dependencies
 
 import { useState, useCallback } from 'react';
-import toast from 'react-hot-toast';
 import type { PhotoFile } from '../types';
 import { isImageFile, createPhotoFile, cleanupPhotoUrls } from '../utils/fileUtils';
+import toast from 'react-hot-toast';
 
 export interface LoadingProgress {
   current: number;
@@ -44,10 +45,9 @@ export const useFileSystem = () => {
       }
 
       const dirHandle = await window.showDirectoryPicker(); //Async Iterator, has next();
-
+      let totalFiles = 0;
       const imageFiles: File[] = [];
       let nonImageCount = 0;
-      let totalFiles = 0;
 
       // Read all files from directory
       for await (const entry of dirHandle.values()) {
@@ -115,7 +115,7 @@ export const useFileSystem = () => {
         }
 
         if (nonImageCount > 0) {
-          toast(`Skipped ${nonImageCount} non-image file${nonImageCount > 1 ? 's' : ''}`, {
+          toast.error(`Skipped ${nonImageCount} non-image file${nonImageCount > 1 ? 's' : ''}`, {
             icon: 'ℹ️',
           });
         }
