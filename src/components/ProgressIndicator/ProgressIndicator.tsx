@@ -1,6 +1,7 @@
 import { memo, useEffect, useState } from 'react';
 import type { LoadingProgress } from '../../hooks/useFileSystem';
 import './ProgressIndicator.css';
+import { cn } from '../../utils/cn';
 
 interface ProgressIndicatorProps {
   progress: LoadingProgress;
@@ -45,7 +46,7 @@ export const ProgressIndicator = memo(({ progress }: ProgressIndicatorProps) => 
   const percentage = progress.total > 0 ? (progress.current / progress.total) * 100 : 0;
 
   return (
-    <div className={`progress-indicator ${isHiding ? 'hiding' : ''}`}>
+    <div className={cn('progress-indicator', { hiding: isHiding })}>
       <div className='progress-indicator-content'>
         <div className='progress-indicator-header'>
           <span className='progress-indicator-title'>Loading Images</span>

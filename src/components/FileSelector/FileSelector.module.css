@@ -86,6 +86,13 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
+.buttonRow {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .buttonSecondary {
   color: var(--text-primary);
   background: var(--gray-50);

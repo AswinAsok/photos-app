@@ -2,6 +2,8 @@
 
 import { useRef } from 'react';
 import styles from './FileSelector.module.css';
+import { MoonLoader } from 'react-spinners';
+import { cn } from '../../utils/cn';
 
 interface FileSelectorProps {
   onSelectDirectory: () => void;
@@ -44,15 +46,15 @@ export const FileSelector = ({
 
           <div className={styles.buttonGroup}>
             <button
-              className={`${styles.button} ${styles.buttonPrimary}`}
+              className={cn(styles.button, styles.buttonPrimary, styles.buttonRow)}
               onClick={onSelectDirectory}
               disabled={isLoading}
             >
-              {isLoading ? 'Loading...' : 'Select Folder'}
+              Select Folder {isLoading && <MoonLoader color='white' size={15} />}
             </button>
 
             <button
-              className={`${styles.button} ${styles.buttonSecondary}`}
+              className={cn(styles.button, styles.buttonSecondary)}
               onClick={handleSelectFilesClick}
               disabled={isLoading}
             >

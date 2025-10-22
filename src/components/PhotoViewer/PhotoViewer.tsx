@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import type { PhotoFile } from '../../types';
 import { getPhotoMetadata } from '../../utils/fileUtils';
 import styles from './PhotoViewer.module.css';
+import { cn } from '../../utils/cn';
 
 interface PhotoViewerProps {
   photos: PhotoFile[];
@@ -62,7 +63,7 @@ export const PhotoViewer = ({ photos, currentIndex, onClose }: PhotoViewerProps)
       </button>
 
       <button
-        className={`${styles.navButton} ${styles.prevButton}`}
+        className={cn(styles.navButton, styles.prevButton)}
         onClick={navigatePrev}
         title='Previous (←)'
       >
@@ -70,7 +71,7 @@ export const PhotoViewer = ({ photos, currentIndex, onClose }: PhotoViewerProps)
       </button>
 
       <button
-        className={`${styles.navButton} ${styles.nextButton}`}
+        className={cn(styles.navButton, styles.nextButton)}
         onClick={navigateNext}
         title='Next (→)'
       >

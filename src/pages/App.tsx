@@ -6,7 +6,8 @@ import styles from './App.module.css';
 import { FileSelector, PhotoGrid, PhotoViewer, ProgressIndicator } from '../components';
 
 const App = () => {
-  const { photos, isLoading, progress, selectDirectory, selectFiles, clearPhotos } = useFileSystem();
+  const { photos, isLoading, progress, selectDirectory, selectFiles, clearPhotos } =
+    useFileSystem();
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
 
   const handlePhotoClick = (index: number) => {
@@ -34,7 +35,6 @@ const App = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <Activity mode={photos.length === 0 ? 'visible' : 'hidden'}>
         <FileSelector
           onSelectDirectory={selectDirectory}
