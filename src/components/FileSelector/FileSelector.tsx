@@ -9,7 +9,11 @@ interface FileSelectorProps {
   isLoading: boolean;
 }
 
-const FileSelector = ({ onSelectDirectory, onSelectFiles, isLoading }: FileSelectorProps) => {
+export const FileSelector = ({
+  onSelectDirectory,
+  onSelectFiles,
+  isLoading,
+}: FileSelectorProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,27 +35,19 @@ const FileSelector = ({ onSelectDirectory, onSelectFiles, isLoading }: FileSelec
         <p className={styles.subtitle}>Select a folder or files to view your photos</p>
 
         <div className={styles.buttonGroup}>
-          <button
-            className={styles.button}
-            onClick={onSelectDirectory}
-            disabled={isLoading}
-          >
+          <button className={styles.button} onClick={onSelectDirectory} disabled={isLoading}>
             {isLoading ? 'Loading...' : 'Select Folder'}
           </button>
 
-          <button
-            className={styles.button}
-            onClick={handleSelectFilesClick}
-            disabled={isLoading}
-          >
+          <button className={styles.button} onClick={handleSelectFilesClick} disabled={isLoading}>
             Select Files
           </button>
         </div>
 
         <input
           ref={fileInputRef}
-          type="file"
-          accept="image/*"
+          type='file'
+          accept='image/*'
           multiple
           onChange={handleFileInputChange}
           className={styles.hiddenInput}
@@ -60,5 +56,3 @@ const FileSelector = ({ onSelectDirectory, onSelectFiles, isLoading }: FileSelec
     </div>
   );
 };
-
-export default FileSelector;

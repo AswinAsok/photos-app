@@ -1,8 +1,8 @@
 // PhotoGrid component following Single Responsibility Principle
 
 import { useState, useEffect } from 'react';
-import type { PhotoFile } from '../types';
 import styles from './PhotoGrid.module.css';
+import type { PhotoFile } from '../../types';
 
 interface PhotoGridProps {
   photos: PhotoFile[];
@@ -10,7 +10,7 @@ interface PhotoGridProps {
   onClearPhotos: () => void;
 }
 
-const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProps) => {
+export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProps) => {
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProps) => {
   }, [photos]);
 
   const handleImageLoad = (photoId: string) => {
-    setLoadedImages(prev => new Set(prev).add(photoId));
+    setLoadedImages((prev) => new Set(prev).add(photoId));
   };
 
   return (
@@ -35,18 +35,12 @@ const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProps) => {
 
       <div className={styles.grid}>
         {photos.map((photo, index) => (
-          <div
-            key={photo.id}
-            className={styles.gridItem}
-            onClick={() => onPhotoClick(index)}
-          >
+          <div key={photo.id} className={styles.gridItem} onClick={() => onPhotoClick(index)}>
             <img
               src={photo.url}
               alt={photo.name}
-              className={`${styles.image} ${
-                loadedImages.has(photo.id) ? styles.loaded : ''
-              }`}
-              loading="lazy"
+              className={`${styles.image} ${loadedImages.has(photo.id) ? styles.loaded : ''}`}
+              loading='lazy'
               onLoad={() => handleImageLoad(photo.id)}
             />
             {!loadedImages.has(photo.id) && (
@@ -60,5 +54,3 @@ const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProps) => {
     </div>
   );
 };
-
-export default PhotoGrid;

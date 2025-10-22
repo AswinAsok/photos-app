@@ -2,7 +2,14 @@
 
 import type { PhotoFile, PhotoMetadata } from '../types';
 
-const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+const SUPPORTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/svg+xml',
+];
 
 export const isImageFile = (file: File): boolean => {
   return SUPPORTED_IMAGE_TYPES.includes(file.type);
@@ -73,5 +80,5 @@ export const getPhotoMetadata = (photo: PhotoFile): PhotoMetadata => {
 };
 
 export const cleanupPhotoUrls = (photos: PhotoFile[]): void => {
-  photos.forEach(photo => URL.revokeObjectURL(photo.url));
+  photos.forEach((photo) => URL.revokeObjectURL(photo.url));
 };
