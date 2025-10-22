@@ -19,6 +19,22 @@ const App = () => {
 
   return (
     <div className={styles.mainContainer}>
+      {/* Header - Consistent across all views */}
+      <header className={styles.header}>
+        <div className={styles.headerContent}>
+          <div className={styles.logo}>
+            ente
+            <span>alla</span>
+          </div>
+          <nav className={styles.nav}>
+            <a href='#' className={styles.navLink}>
+              Aswin Asok's Submission
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      {/* Main Content */}
       <Activity mode={photos.length === 0 ? 'visible' : 'hidden'}>
         <FileSelector
           onSelectDirectory={selectDirectory}

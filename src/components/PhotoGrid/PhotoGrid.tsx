@@ -24,15 +24,6 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProp
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.headerContent}>
-          <h2 className={styles.title}>{photos.length} Photos</h2>
-          <button className={styles.clearButton} onClick={onClearPhotos}>
-            Clear & Select New
-          </button>
-        </div>
-      </div>
-
       <div className={styles.grid}>
         {photos.map((photo, index) => (
           <div key={photo.id} className={styles.gridItem} onClick={() => onPhotoClick(index)}>
@@ -50,6 +41,14 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProp
             )}
           </div>
         ))}
+      </div>
+      <div className={styles.header}>
+        <div className={styles.headerContent}>
+          <h2 className={styles.title}>{photos.length} Photos</h2>
+          <button className={styles.clearButton} onClick={onClearPhotos}>
+            Clear & Select New
+          </button>
+        </div>
       </div>
     </div>
   );
