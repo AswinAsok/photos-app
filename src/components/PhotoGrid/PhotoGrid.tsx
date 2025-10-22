@@ -109,6 +109,11 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProp
       index: number;
       context: typeof itemContext;
     }) => {
+      // Handle case where photo data is not yet available
+      if (!photo) {
+        return null;
+      }
+
       return (
         <PhotoItem
           photo={photo}
