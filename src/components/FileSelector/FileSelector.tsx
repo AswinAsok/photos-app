@@ -1,15 +1,21 @@
 // FileSelector component following Single Responsibility Principle
 
 import { useRef } from 'react';
+import { MoonLoader } from 'react-spinners';
 import styles from './FileSelector.module.css';
 import { cn } from '../../utils/cn';
 
 interface FileSelectorProps {
   onSelectDirectory: () => void;
   onSelectFiles: (files: FileList | null) => void;
+  isLoadingDirectory: boolean;
 }
 
-export const FileSelector = ({ onSelectDirectory, onSelectFiles }: FileSelectorProps) => {
+export const FileSelector = ({
+  onSelectDirectory,
+  onSelectFiles,
+  isLoadingDirectory,
+}: FileSelectorProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,8 +48,9 @@ export const FileSelector = ({ onSelectDirectory, onSelectFiles }: FileSelectorP
             <button
               className={cn(styles.button, styles.buttonPrimary, styles.buttonRow)}
               onClick={onSelectDirectory}
+              disabled={isLoadingDirectory}
             >
-              Select Folder
+              {isLoadingDirectory ? <MoonLoader size={20} color='#ffffff' /> : 'Select Folder'}
             </button>
 
             <button

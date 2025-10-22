@@ -12,11 +12,12 @@ export interface LoadingProgress {
   isLoading: boolean;
 }
 
-const BATCH_SIZE = Infinity;
+const BATCH_SIZE = 5000;
 
 export const useFileSystem = () => {
   const [photos, setPhotos] = useState<PhotoFile[]>([]);
   const [folders, setFolders] = useState<FolderWithPhotos[]>([]);
+  const [isLoadingDirectory, setIsLoadingDirectory] = useState(false);
 
   const processBatches = useCallback(async (imageFiles: File[]) => {
     const allPhotoFiles: PhotoFile[] = [];
@@ -78,6 +79,7 @@ export const useFileSystem = () => {
         return;
       }
 
+      setIsLoadingDirectory(true);
       const dirHandle = await window.showDirectoryPicker();
 
       // Cleanup previous photos
@@ -128,6 +130,8 @@ export const useFileSystem = () => {
         console.error('Error selecting directory:', error);
         toast.error('Failed to load directory');
       }
+    } finally {
+      setIsLoadingDirectory(false);
     }
   }, [photos, scanDirectoryRecursive]);
 
@@ -181,5 +185,6 @@ export const useFileSystem = () => {
     selectDirectory,
     selectFiles,
     clearPhotos,
+    isLoadingDirectory,
   };
 };
