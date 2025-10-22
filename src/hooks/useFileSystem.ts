@@ -15,7 +15,6 @@ const BATCH_SIZE = 20;
 
 export const useFileSystem = () => {
   const [photos, setPhotos] = useState<PhotoFile[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const processBatches = useCallback(async (imageFiles: File[]) => {
     const allPhotoFiles: PhotoFile[] = [];
@@ -44,7 +43,6 @@ export const useFileSystem = () => {
         return;
       }
 
-      setIsLoading(true);
       const dirHandle = await window.showDirectoryPicker(); //Async Iterator, has next();
 
       const imageFiles: File[] = [];
@@ -68,7 +66,6 @@ export const useFileSystem = () => {
       if (totalFiles === 0) {
         toast.error('This folder is empty');
         setPhotos([]);
-        setIsLoading(false);
         return;
       }
 
@@ -76,7 +73,6 @@ export const useFileSystem = () => {
       if (imageFiles.length === 0) {
         toast.error('No image files found in this folder');
         setPhotos([]);
-        setIsLoading(false);
         return;
       }
 
@@ -101,16 +97,12 @@ export const useFileSystem = () => {
         console.error('Error selecting directory:', error);
         toast.error('Failed to load directory');
       }
-    } finally {
-      setIsLoading(false);
     }
   }, [photos, processBatches]);
 
   const selectFiles = useCallback(
     async (files: FileList | null) => {
       if (!files || files.length === 0) return;
-
-      setIsLoading(true);
 
       try {
         const fileArray = Array.from(files);
@@ -119,7 +111,6 @@ export const useFileSystem = () => {
 
         if (imageFiles.length === 0) {
           toast.error('No image files selected');
-          setIsLoading(false);
           return;
         }
 
@@ -142,8 +133,6 @@ export const useFileSystem = () => {
       } catch (error) {
         console.error('Error loading files:', error);
         toast.error('Failed to load files');
-      } finally {
-        setIsLoading(false);
       }
     },
     [photos, processBatches],
@@ -156,8 +145,6 @@ export const useFileSystem = () => {
 
   return {
     photos,
-    isLoading,
-
     selectDirectory,
     selectFiles,
     clearPhotos,

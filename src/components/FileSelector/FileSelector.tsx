@@ -2,20 +2,14 @@
 
 import { useRef } from 'react';
 import styles from './FileSelector.module.css';
-import { MoonLoader } from 'react-spinners';
 import { cn } from '../../utils/cn';
 
 interface FileSelectorProps {
   onSelectDirectory: () => void;
   onSelectFiles: (files: FileList | null) => void;
-  isLoading: boolean;
 }
 
-export const FileSelector = ({
-  onSelectDirectory,
-  onSelectFiles,
-  isLoading,
-}: FileSelectorProps) => {
+export const FileSelector = ({ onSelectDirectory, onSelectFiles }: FileSelectorProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,17 +42,15 @@ export const FileSelector = ({
             <button
               className={cn(styles.button, styles.buttonPrimary, styles.buttonRow)}
               onClick={onSelectDirectory}
-              disabled={isLoading}
             >
-              Select Folder {isLoading && <MoonLoader color='white' size={15} />}
+              Select Folder
             </button>
 
             <button
               className={cn(styles.button, styles.buttonSecondary, styles.buttonRow)}
               onClick={handleSelectFilesClick}
-              disabled={isLoading}
             >
-              Select Files {isLoading && <MoonLoader color='black' size={15} />}
+              Select Files
             </button>
           </div>
 
