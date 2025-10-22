@@ -23,18 +23,18 @@
 
 .closeButton {
   position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
+  top: var(--space-6);
+  right: var(--space-6);
   width: 50px;
   height: 50px;
   background: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 2rem;
-  border-radius: 50%;
+  color: var(--primary-white);
+  font-size: var(--text-4xl);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all var(--duration-300) var(--ease-in-out);
   z-index: 1002;
   backdrop-filter: blur(10px);
 }
@@ -51,13 +51,13 @@
   width: 60px;
   height: 60px;
   background: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 3rem;
-  border-radius: 50%;
+  color: var(--primary-white);
+  font-size: var(--text-5xl);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all var(--duration-300) var(--ease-in-out);
   z-index: 1002;
   backdrop-filter: blur(10px);
 }
@@ -68,11 +68,11 @@
 }
 
 .prevButton {
-  left: 2rem;
+  left: var(--space-8);
 }
 
 .nextButton {
-  right: 2rem;
+  right: var(--space-8);
 }
 
 .imageContainer {
@@ -87,9 +87,9 @@
   max-width: 100%;
   max-height: 90vh;
   object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  animation: scaleIn 0.3s ease;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2xl);
+  animation: scaleIn var(--duration-300) var(--ease-in-out);
 }
 
 @keyframes scaleIn {
@@ -105,19 +105,19 @@
 
 .infoButton {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
+  bottom: var(--space-6);
+  right: var(--space-6);
   width: 50px;
   height: 50px;
   background: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
-  border-radius: 50%;
+  color: var(--primary-white);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all var(--duration-300) var(--ease-in-out);
   z-index: 1002;
   backdrop-filter: blur(10px);
 }
@@ -129,16 +129,16 @@
 
 .metadata {
   position: fixed;
-  bottom: 1.5rem;
-  left: 1.5rem;
+  bottom: var(--space-6);
+  left: var(--space-6);
   max-width: 400px;
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
   z-index: 1002;
   backdrop-filter: blur(10px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
+  box-shadow: var(--shadow-2xl);
+  animation: slideUp var(--duration-300) var(--ease-in-out);
 }
 
 @keyframes slideUp {
@@ -156,61 +156,61 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 2px solid var(--gray-200);
 }
 
 .metadataTitle {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2d3748;
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
 }
 
 .imageCounter {
-  font-size: 0.9rem;
-  color: #718096;
-  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-weight: var(--font-semibold);
 }
 
 .metadataContent {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
 .metadataRow {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .metadataLabel {
-  font-weight: 600;
-  color: #4a5568;
+  font-weight: var(--font-semibold);
+  color: var(--text-secondary);
   min-width: 90px;
 }
 
 .metadataValue {
-  color: #2d3748;
+  color: var(--text-primary);
   word-break: break-word;
   flex: 1;
 }
 
 .keyboardHints {
   display: flex;
-  gap: 1rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid #e2e8f0;
-  font-size: 0.85rem;
-  color: #718096;
+  gap: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--gray-200);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
   flex-wrap: wrap;
 }
 
 .keyboardHints span {
-  background: #f7fafc;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  background: var(--gray-50);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
 }
 
 /* Mobile responsive */
@@ -219,38 +219,38 @@
   .infoButton {
     width: 40px;
     height: 40px;
-    font-size: 1.2rem;
+    font-size: var(--text-xl);
   }
 
   .navButton {
     width: 50px;
     height: 50px;
-    font-size: 2rem;
+    font-size: var(--text-4xl);
   }
 
   .prevButton {
-    left: 1rem;
+    left: var(--space-4);
   }
 
   .nextButton {
-    right: 1rem;
+    right: var(--space-4);
   }
 
   .metadata {
-    max-width: calc(100% - 3rem);
-    padding: 1rem;
+    max-width: calc(100% - var(--space-12));
+    padding: var(--space-4);
   }
 
   .metadataLabel {
     min-width: 70px;
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
   }
 
   .metadataValue {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
   }
 
   .keyboardHints {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
   }
 }
