@@ -48,25 +48,18 @@ export const getImageDimensions = (file: File): Promise<{ width: number; height:
 
 export const createPhotoFile = async (file: File): Promise<PhotoFile> => {
   const url = URL.createObjectURL(file);
-  let dimensions: { width?: number; height?: number } = {};
 
-  try {
-    const { width, height } = await getImageDimensions(file);
-    dimensions = { width, height };
-  } catch {
-    // Dimensions are optional
-  }
-
+  // Defer dimension calculation - only calculate when needed
+  // This speeds up initial loading significantly
   return {
     id: `${file.name}-${file.lastModified}`,
     name: file.name,
     url,
     file,
-    ...dimensions,
     size: file.size,
     type: file.type,
     lastModified: file.lastModified,
-    isLoaded: true,
+    isLoaded: false, // Will be set to true when image loads
   };
 };
 

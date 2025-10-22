@@ -49,50 +49,30 @@
   box-shadow: 0 4px 12px rgba(0, 168, 107, 0.35);
 }
 
-.grid {
+.gridWrapper {
   flex: 1;
-  overflow-y: auto;
   padding: var(--space-8);
-  /* Masonry layout using CSS columns */
-  column-count: 1;
-  column-gap: var(--space-4);
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-  column-fill: balance;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-@media (min-width: 640px) {
-  .grid {
-    column-count: 2;
-    column-gap: var(--space-4);
-  }
+/* Masonry grid container */
+.masonryGrid {
+  display: flex;
+  margin-left: calc(var(--space-4) * -1);
+  width: auto;
 }
 
-@media (min-width: 768px) {
-  .grid {
-    column-count: 3;
-    column-gap: var(--space-6);
-  }
-}
-
-@media (min-width: 1024px) {
-  .grid {
-    column-count: 4;
-    column-gap: var(--space-6);
-  }
-}
-
-@media (min-width: 1280px) {
-  .grid {
-    column-count: 5;
-    column-gap: var(--space-6);
-  }
+/* Masonry column */
+.masonryColumn {
+  padding-left: var(--space-4);
+  background-clip: padding-box;
 }
 
 .gridItem {
-  break-inside: avoid;
-  margin-bottom: var(--space-4);
   cursor: pointer;
   position: relative;
   border-radius: var(--radius-xl);
@@ -100,6 +80,9 @@
   background: var(--primary-white);
   box-shadow: var(--shadow-sm);
   transition: all var(--duration-300) var(--ease-in-out);
+  width: 100%;
+  margin-bottom: var(--space-4);
+  break-inside: avoid;
 }
 
 .gridItem:hover {
@@ -125,8 +108,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  min-height: 200px;
   z-index: 1;
+  aspect-ratio: 1 / 1;
 }
 
 .skeletonContainer {
@@ -136,19 +119,19 @@
 }
 
 /* Custom scrollbar */
-.grid::-webkit-scrollbar {
+.gridWrapper::-webkit-scrollbar {
   width: 10px;
 }
 
-.grid::-webkit-scrollbar-track {
+.gridWrapper::-webkit-scrollbar-track {
   background: var(--gray-100);
 }
 
-.grid::-webkit-scrollbar-thumb {
+.gridWrapper::-webkit-scrollbar-thumb {
   background: var(--gray-300);
   border-radius: var(--radius-md);
 }
 
-.grid::-webkit-scrollbar-thumb:hover {
+.gridWrapper::-webkit-scrollbar-thumb:hover {
   background: var(--gray-400);
 }
