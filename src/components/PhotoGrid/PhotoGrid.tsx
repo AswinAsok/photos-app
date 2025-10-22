@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import styles from './PhotoGrid.module.css';
 import type { PhotoFile } from '../../types';
 import { cn } from '../../utils';
@@ -11,22 +10,11 @@ interface PhotoGridProps {
 }
 
 export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProps) => {
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
-
-  // Reset loaded images when photos change
-  useEffect(() => {
-    setLoadedImages(new Set());
-  }, [photos]);
-
-  const handleImageLoad = (photoId: string) => {
-    setLoadedImages((prev) => new Set(prev).add(photoId));
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.grid}>
         {photos.map((photo, index) => {
-          const isLoaded = loadedImages.has(photo.id);
+          const isLoaded = photo.isLoaded;
           return (
             <div key={photo.id} className={styles.gridItem} onClick={() => onPhotoClick(index)}>
               {!isLoaded && (
@@ -43,8 +31,6 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProp
                 src={photo.url}
                 alt={photo.name}
                 className={cn(styles.image, { [styles.loaded]: isLoaded })}
-                loading='lazy'
-                onLoad={() => handleImageLoad(photo.id)}
               />
             </div>
           );
