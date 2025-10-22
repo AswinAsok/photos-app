@@ -1,10 +1,11 @@
 import { VirtuosoMasonry } from '@virtuoso.dev/masonry';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import styles from './PhotoGrid.module.css';
 import type { PhotoFile, FolderWithPhotos } from '../../types';
 import { cn } from '../../utils';
 import Skeleton from 'react-loading-skeleton';
 import { FolderAccordion } from '../FolderAccordion/FolderAccordion';
+import { PhotoHeader } from '../PhotoHeader/PhotoHeader';
 
 interface PhotoGridProps {
   photos: PhotoFile[];
@@ -20,6 +21,26 @@ interface PhotoItemProps {
   onPhotoClick: (index: number) => void;
   onImageLoad: (id: string) => void;
 }
+
+// Common masonry styles
+const BASE_MASONRY_STYLE: CSSProperties = {
+  maxWidth: '1400px',
+  width: '100%',
+  boxSizing: 'border-box',
+  gap: 'var(--space-4)',
+  margin: 'auto',
+};
+
+const FOLDER_MASONRY_STYLE: CSSProperties = {
+  ...BASE_MASONRY_STYLE,
+  padding: 'var(--space-4)',
+};
+
+const SINGLE_MASONRY_STYLE: CSSProperties = {
+  ...BASE_MASONRY_STYLE,
+  height: '100%',
+  padding: 'var(--space-8)',
+};
 
 // Memoized photo item component
 const PhotoItem = memo(({ photo, index, isLoaded, onPhotoClick, onImageLoad }: PhotoItemProps) => {
@@ -77,7 +98,9 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos, folders }: Phot
   const handleFolderToggle = useCallback((path: string) => {
     setFolderStates((prev) =>
       prev.map((folder) =>
-        folder.path === path ? { ...folder, isExpanded: !folder.isExpanded } : folder,
+        folder.path === path
+          ? { ...folder, isExpanded: !folder.isExpanded }
+          : { ...folder, isExpanded: false },
       ),
     );
   }, []);
@@ -116,32 +139,30 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos, folders }: Phot
     [loadedImages, onPhotoClick, handleImageLoad],
   );
 
-  // ItemContent component for VirtuosoMasonry
-  const ItemContent = useCallback(
-    ({
-      data: photo,
-      index,
-      context,
-    }: {
-      data: PhotoFile;
-      index: number;
-      context: typeof itemContext;
-    }) => {
-      // Handle case where photo data is not yet available
-      if (!photo) {
-        return null;
-      }
+  // Unified function to create ItemContent renderer with optional index offset
+  const createItemRenderer = useCallback(
+    (indexOffset: number = 0) =>
+      ({
+        data: photo,
+        index,
+        context,
+      }: {
+        data: PhotoFile;
+        index: number;
+        context: typeof itemContext;
+      }) => {
+        if (!photo) return null;
 
-      return (
-        <PhotoItem
-          photo={photo}
-          index={index}
-          isLoaded={context.loadedImages.has(photo.id)}
-          onPhotoClick={context.onPhotoClick}
-          onImageLoad={context.onImageLoad}
-        />
-      );
-    },
+        return (
+          <PhotoItem
+            photo={photo}
+            index={indexOffset + index}
+            isLoaded={context.loadedImages.has(photo.id)}
+            onPhotoClick={context.onPhotoClick}
+            onImageLoad={context.onImageLoad}
+          />
+        );
+      },
     [],
   );
 
@@ -153,16 +174,13 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos, folders }: Phot
   if (folderStates && folderStates.length > 0) {
     return (
       <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.headerContent}>
-            <h2 className={styles.title}>
-              {photos.length} Photos in {folderStates.length} Folders
-            </h2>
-            <button className={styles.clearButton} onClick={onClearPhotos}>
-              Clear & Select New
-            </button>
-          </div>
-        </div>
+        <PhotoHeader
+          photoCount={photos.length}
+          folderCount={folderStates.length}
+          onClearPhotos={onClearPhotos}
+          folders={folderStates}
+          onFolderClick={handleFolderToggle}
+        />
         <div className={styles.foldersContainer}>
           {folderStates.map((folder) => {
             // Calculate global photo indices for this folder
@@ -178,28 +196,8 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos, folders }: Phot
                   context={itemContext}
                   useWindowScroll={false}
                   initialItemCount={20}
-                  ItemContent={({ data: photo, index, context }) => {
-                    if (!photo) return null;
-                    // Calculate global index for photo viewer
-                    const globalIndex = folderStartIndex + index;
-                    return (
-                      <PhotoItem
-                        photo={photo}
-                        index={globalIndex}
-                        isLoaded={context.loadedImages.has(photo.id)}
-                        onPhotoClick={context.onPhotoClick}
-                        onImageLoad={context.onImageLoad}
-                      />
-                    );
-                  }}
-                  style={{
-                    maxWidth: '1400px',
-                    width: '100%',
-                    padding: 'var(--space-4)',
-                    boxSizing: 'border-box',
-                    gap: 'var(--space-4)',
-                    margin: 'auto',
-                  }}
+                  ItemContent={createItemRenderer(folderStartIndex)}
+                  style={FOLDER_MASONRY_STYLE}
                 />
               </FolderAccordion>
             );
@@ -220,27 +218,12 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos, folders }: Phot
             context={itemContext}
             useWindowScroll={false}
             initialItemCount={20}
-            ItemContent={ItemContent}
-            style={{
-              height: '100%',
-              maxWidth: '1400px',
-              width: '100%',
-              padding: 'var(--space-8)',
-              boxSizing: 'border-box',
-              gap: 'var(--space-4)',
-              margin: 'auto',
-            }}
+            ItemContent={createItemRenderer(0)}
+            style={SINGLE_MASONRY_STYLE}
           />
         </div>
       </div>
-      <div className={styles.header}>
-        <div className={styles.headerContent}>
-          <h2 className={styles.title}>{photos.length} Photos</h2>
-          <button className={styles.clearButton} onClick={onClearPhotos}>
-            ~ Clear & Select New
-          </button>
-        </div>
-      </div>
+      <PhotoHeader photoCount={photos.length} onClearPhotos={onClearPhotos} />
     </div>
   );
 };

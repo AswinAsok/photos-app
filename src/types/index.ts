@@ -44,3 +44,16 @@ export interface PhotoViewerProps {
 export interface FileSelectorProps {
   onFilesSelected: (files: PhotoFile[]) => void;
 }
+
+export interface PhotoHeaderProps {
+  photoCount: number;
+  folderCount?: number;
+  onClearPhotos: () => void;
+  folders?: FolderWithPhotos[];
+  onFolderClick?: (path: string) => void;
+}
+
+export interface BreadcrumbNavigationProps {
+  folders: FolderWithPhotos[];
+  onFolderClick?: (path: string) => void;
+}
