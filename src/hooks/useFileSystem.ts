@@ -2,7 +2,7 @@
 // Now uses injected services instead of direct dependencies
 
 import { useState, useCallback } from 'react';
-import type { PhotoFile } from '../types';
+import type { PhotoFile, FolderWithPhotos } from '../types';
 import { isImageFile, createPhotoFile, cleanupPhotoUrls } from '../utils/fileUtils';
 import toast from 'react-hot-toast';
 
@@ -16,6 +16,7 @@ const BATCH_SIZE = 20;
 
 export const useFileSystem = () => {
   const [photos, setPhotos] = useState<PhotoFile[]>([]);
+  const [folders, setFolders] = useState<FolderWithPhotos[]>([]);
 
   const processBatches = useCallback(async (imageFiles: File[]) => {
     const allPhotoFiles: PhotoFile[] = [];
@@ -34,6 +35,39 @@ export const useFileSystem = () => {
     return allPhotoFiles;
   }, []);
 
+  // Recursively scan directories and collect files organized by folder
+  const scanDirectoryRecursive = useCallback(
+    async (
+      dirHandle: FileSystemDirectoryHandle,
+      basePath = '',
+    ): Promise<{ path: string; files: File[] }[]> => {
+      const folderFiles: { path: string; files: File[] }[] = [];
+      const currentFolderFiles: File[] = [];
+
+      for await (const entry of dirHandle.values()) {
+        if (entry.kind === 'file') {
+          const file = await entry.getFile();
+          if (isImageFile(file)) {
+            currentFolderFiles.push(file);
+          }
+        } else if (entry.kind === 'directory') {
+          // Recursively scan subdirectories
+          const subPath = basePath ? `${basePath}/${entry.name}` : entry.name;
+          const subFolders = await scanDirectoryRecursive(entry, subPath);
+          folderFiles.push(...subFolders);
+        }
+      }
+
+      // Add current folder if it has images
+      if (currentFolderFiles.length > 0) {
+        folderFiles.unshift({ path: basePath || 'Root', files: currentFolderFiles });
+      }
+
+      return folderFiles;
+    },
+    [],
+  );
+
   const selectDirectory = useCallback(async () => {
     try {
       // Check if File System Access API is supported
@@ -44,61 +78,58 @@ export const useFileSystem = () => {
         return;
       }
 
-      const dirHandle = await window.showDirectoryPicker(); //Async Iterator, has next();
-      let totalFiles = 0;
-      const imageFiles: File[] = [];
-      let nonImageCount = 0;
+      const dirHandle = await window.showDirectoryPicker();
 
-      // Read all files from directory
-      for await (const entry of dirHandle.values()) {
-        if (entry.kind === 'file') {
-          totalFiles++;
-          const file = await entry.getFile();
-          if (isImageFile(file)) {
-            imageFiles.push(file);
-          } else {
-            nonImageCount++;
-          }
-        }
-      }
-
-      // Handle empty directory
-      if (totalFiles === 0) {
-        toast.error('This folder is empty');
-        setPhotos([]);
-        return;
-      }
-
-      // Handle no images found
-      if (imageFiles.length === 0) {
-        toast.error('No image files found in this folder');
-        setPhotos([]);
-        return;
-      }
-
-      // Notify about non-image files
-      if (nonImageCount > 0) {
-        toast(`Skipped ${nonImageCount} non-image file${nonImageCount > 1 ? 's' : ''}`, {
-          icon: 'ℹ️',
-        });
-      }
       // Cleanup previous photos
       cleanupPhotoUrls(photos);
 
-      // Clear photos before loading new ones
+      // Clear photos and folders before loading new ones
       setPhotos([]);
+      setFolders([]);
 
-      // Process images in batches
-      const photoFiles = await processBatches(imageFiles);
+      // Recursively scan all folders
+      const folderData = await scanDirectoryRecursive(dirHandle);
 
-      toast.success(`Loaded ${photoFiles.length} image${photoFiles.length > 1 ? 's' : ''}`);
+      // Handle no folders with images
+      if (folderData.length === 0) {
+        toast.error('No image files found in this folder or its subfolders');
+        return;
+      }
+
+      // Process each folder's images
+      const allFoldersWithPhotos: FolderWithPhotos[] = [];
+      let totalImages = 0;
+
+      for (const { path, files } of folderData) {
+        const photoFiles = await Promise.all(files.map((file) => createPhotoFile(file)));
+
+        allFoldersWithPhotos.push({
+          path,
+          name: path === 'Root' ? 'Root Folder' : path.split('/').pop() || path,
+          photos: photoFiles,
+          isExpanded: allFoldersWithPhotos.length === 0, // First folder expanded by default
+        });
+
+        totalImages += photoFiles.length;
+      }
+
+      setFolders(allFoldersWithPhotos);
+
+      // Also set all photos in a flat array for backward compatibility
+      const allPhotos = allFoldersWithPhotos.flatMap((folder) => folder.photos);
+      setPhotos(allPhotos);
+
+      const folderCount = allFoldersWithPhotos.length;
+      toast.success(
+        `Loaded ${totalImages} image${totalImages > 1 ? 's' : ''} from ${folderCount} folder${folderCount > 1 ? 's' : ''}`,
+      );
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
         console.error('Error selecting directory:', error);
         toast.error('Failed to load directory');
       }
     }
-  }, [photos, processBatches]);
+  }, [photos, scanDirectoryRecursive]);
 
   const selectFiles = useCallback(
     async (files: FileList | null) => {
@@ -141,10 +172,12 @@ export const useFileSystem = () => {
   const clearPhotos = useCallback(() => {
     cleanupPhotoUrls(photos);
     setPhotos([]);
+    setFolders([]);
   }, [photos]);
 
   return {
     photos,
+    folders,
     selectDirectory,
     selectFiles,
     clearPhotos,

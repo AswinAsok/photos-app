@@ -25,12 +25,57 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--space-4);
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--gray-600);
+}
+
+.breadcrumbItem {
+  background: none;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--primary-green);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-200) var(--ease-in-out);
+  white-space: nowrap;
+}
+
+.breadcrumbItem:hover {
+  background: var(--gray-100);
+  color: #00975f;
+}
+
+.breadcrumbSeparator {
+  color: var(--gray-400);
+  user-select: none;
+  font-weight: var(--font-normal);
 }
 
 .title {
   font-size: var(--text-2xl);
   font-weight: var(--font-semibold);
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .clearButton {
@@ -138,4 +183,63 @@
 
 .gridWrapper::-webkit-scrollbar-thumb:hover {
   background: var(--gray-400);
+}
+
+.foldersContainer {
+  flex: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-8);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar for folders container */
+.foldersContainer::-webkit-scrollbar {
+  width: 10px;
+}
+
+.foldersContainer::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+.foldersContainer::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: var(--radius-md);
+}
+
+.foldersContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .titleSection {
+    width: 100%;
+  }
+
+  .title {
+    font-size: var(--text-lg);
+  }
+
+  .breadcrumb {
+    font-size: var(--text-xs);
+  }
+
+  .breadcrumbItem {
+    padding: 2px var(--space-1);
+    font-size: var(--text-xs);
+  }
+
+  .clearButton {
+    width: 100%;
+    text-align: center;
+  }
 }

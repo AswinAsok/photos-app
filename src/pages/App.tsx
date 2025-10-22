@@ -6,7 +6,7 @@ import styles from './App.module.css';
 import { FileSelector, PhotoGrid, PhotoViewer } from '../components';
 
 const App = () => {
-  const { photos, selectDirectory, selectFiles, clearPhotos } = useFileSystem();
+  const { photos, folders, selectDirectory, selectFiles, clearPhotos } = useFileSystem();
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
 
   const handlePhotoClick = (index: number) => {
@@ -39,7 +39,12 @@ const App = () => {
       </Activity>
 
       <Activity mode={photos.length > 0 ? 'visible' : 'hidden'}>
-        <PhotoGrid photos={photos} onPhotoClick={handlePhotoClick} onClearPhotos={clearPhotos} />
+        <PhotoGrid
+          photos={photos}
+          folders={folders}
+          onPhotoClick={handlePhotoClick}
+          onClearPhotos={clearPhotos}
+        />
       </Activity>
 
       {viewerIndex !== null && (

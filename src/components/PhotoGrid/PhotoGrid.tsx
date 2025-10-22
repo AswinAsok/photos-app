@@ -1,14 +1,16 @@
 import { VirtuosoMasonry } from '@virtuoso.dev/masonry';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './PhotoGrid.module.css';
-import type { PhotoFile } from '../../types';
+import type { PhotoFile, FolderWithPhotos } from '../../types';
 import { cn } from '../../utils';
 import Skeleton from 'react-loading-skeleton';
+import { FolderAccordion } from '../FolderAccordion/FolderAccordion';
 
 interface PhotoGridProps {
   photos: PhotoFile[];
   onPhotoClick: (index: number) => void;
   onClearPhotos: () => void;
+  folders?: FolderWithPhotos[];
 }
 
 interface PhotoItemProps {
@@ -57,11 +59,27 @@ function useWindowWidth() {
   return width;
 }
 
-export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProps) => {
+export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos, folders }: PhotoGridProps) => {
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+  const [folderStates, setFolderStates] = useState<FolderWithPhotos[]>(folders || []);
+
+  // Update folder states when folders prop changes
+  useEffect(() => {
+    if (folders) {
+      setFolderStates(folders);
+    }
+  }, [folders]);
 
   const handleImageLoad = useCallback((id: string) => {
     setLoadedImages((prev) => new Set(prev).add(id));
+  }, []);
+
+  const handleFolderToggle = useCallback((path: string) => {
+    setFolderStates((prev) =>
+      prev.map((folder) =>
+        folder.path === path ? { ...folder, isExpanded: !folder.isExpanded } : folder,
+      ),
+    );
   }, []);
 
   // Clear loaded images when photos change
@@ -131,6 +149,67 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProp
     return null;
   }
 
+  // Render folders with accordions
+  if (folderStates && folderStates.length > 0) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.headerContent}>
+            <h2 className={styles.title}>
+              {photos.length} Photos in {folderStates.length} Folders
+            </h2>
+            <button className={styles.clearButton} onClick={onClearPhotos}>
+              Clear & Select New
+            </button>
+          </div>
+        </div>
+        <div className={styles.foldersContainer}>
+          {folderStates.map((folder) => {
+            // Calculate global photo indices for this folder
+            const folderStartIndex = folderStates
+              .slice(0, folderStates.indexOf(folder))
+              .reduce((sum, f) => sum + f.photos.length, 0);
+
+            return (
+              <FolderAccordion key={folder.path} folder={folder} onToggle={handleFolderToggle}>
+                <VirtuosoMasonry
+                  columnCount={columnCount}
+                  data={folder.photos}
+                  context={itemContext}
+                  useWindowScroll={false}
+                  initialItemCount={20}
+                  ItemContent={({ data: photo, index, context }) => {
+                    if (!photo) return null;
+                    // Calculate global index for photo viewer
+                    const globalIndex = folderStartIndex + index;
+                    return (
+                      <PhotoItem
+                        photo={photo}
+                        index={globalIndex}
+                        isLoaded={context.loadedImages.has(photo.id)}
+                        onPhotoClick={context.onPhotoClick}
+                        onImageLoad={context.onImageLoad}
+                      />
+                    );
+                  }}
+                  style={{
+                    maxWidth: '1400px',
+                    width: '100%',
+                    padding: 'var(--space-4)',
+                    boxSizing: 'border-box',
+                    gap: 'var(--space-4)',
+                    margin: 'auto',
+                  }}
+                />
+              </FolderAccordion>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Render single masonry grid (backward compatibility)
   return (
     <div className={styles.container}>
       <div className={styles.masonaryGridContainer}>
@@ -158,7 +237,7 @@ export const PhotoGrid = ({ photos, onPhotoClick, onClearPhotos }: PhotoGridProp
         <div className={styles.headerContent}>
           <h2 className={styles.title}>{photos.length} Photos</h2>
           <button className={styles.clearButton} onClick={onClearPhotos}>
-            Clear & Select New
+            ~ Clear & Select New
           </button>
         </div>
       </div>

@@ -1,0 +1,85 @@
+.accordionContainer {
+  margin-bottom: var(--space-6);
+}
+
+.accordionHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--duration-200) var(--ease-in-out);
+}
+
+.accordionHeader:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-300);
+}
+
+.accordionHeader:active {
+  background: var(--gray-200);
+}
+
+.accordionIcon {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  transition: transform var(--duration-200) var(--ease-in-out);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-4);
+  height: var(--space-4);
+}
+
+.accordionTitle {
+  flex: 1;
+  text-align: left;
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.photoCount {
+  font-size: var(--text-sm);
+  font-weight: var(--font-regular);
+  color: var(--text-secondary);
+}
+
+.accordionContent {
+  margin-top: var(--space-4);
+  animation: slideDown var(--duration-300) var(--ease-in-out);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .accordionHeader {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .accordionTitle {
+    font-size: var(--text-base);
+  }
+
+  .photoCount {
+    font-size: var(--text-xs);
+  }
+}

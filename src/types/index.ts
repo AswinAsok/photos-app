@@ -21,9 +21,17 @@ export interface PhotoMetadata {
   lastModified: string;
 }
 
+export interface FolderWithPhotos {
+  path: string;
+  name: string;
+  photos: PhotoFile[];
+  isExpanded: boolean;
+}
+
 export interface PhotoGridProps {
   photos: PhotoFile[];
   onPhotoClick: (index: number) => void;
+  folders?: FolderWithPhotos[];
 }
 
 export interface PhotoViewerProps {
