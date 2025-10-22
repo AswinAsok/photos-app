@@ -16,16 +16,8 @@ const BATCH_SIZE = 20;
 export const useFileSystem = () => {
   const [photos, setPhotos] = useState<PhotoFile[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [progress, setProgress] = useState<LoadingProgress>({
-    current: 0,
-    total: 0,
-    isLoading: false,
-  });
 
   const processBatches = useCallback(async (imageFiles: File[]) => {
-    const totalImages = imageFiles.length;
-    setProgress({ current: 0, total: totalImages, isLoading: true });
-
     const allPhotoFiles: PhotoFile[] = [];
 
     // Process images in batches
@@ -37,17 +29,7 @@ export const useFileSystem = () => {
 
       // Update photos state incrementally to show progress
       setPhotos((prev) => [...prev, ...batchPhotos]);
-
-      // Update progress
-      setProgress({
-        current: Math.min(i + BATCH_SIZE, totalImages),
-        total: totalImages,
-        isLoading: i + BATCH_SIZE < totalImages,
-      });
     }
-
-    // Final progress update
-    setProgress({ current: totalImages, total: totalImages, isLoading: false });
 
     return allPhotoFiles;
   }, []);
@@ -170,13 +152,12 @@ export const useFileSystem = () => {
   const clearPhotos = useCallback(() => {
     cleanupPhotoUrls(photos);
     setPhotos([]);
-    setProgress({ current: 0, total: 0, isLoading: false });
   }, [photos]);
 
   return {
     photos,
     isLoading,
-    progress,
+
     selectDirectory,
     selectFiles,
     clearPhotos,
