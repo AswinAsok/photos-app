@@ -1,9 +1,10 @@
 // FileSelector component following Single Responsibility Principle
 
-import { useRef, useEffect, useState, Activity } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { MoonLoader } from 'react-spinners';
 import styles from './FileSelector.module.css';
 import { cn } from '../../utils/cn';
+import { getFileSystemAccessFlagUrl } from '../../utils/flags';
 
 interface FileSelectorProps {
   onSelectDirectory: () => void;
@@ -18,6 +19,7 @@ export const FileSelector = ({
 }: FileSelectorProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isApiAvailable, setIsApiAvailable] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     // Check if File System Access API is available
@@ -36,6 +38,16 @@ export const FileSelector = ({
     fileInputRef.current?.click();
   };
 
+  const handleCopyFlagUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy URL:', err);
+    }
+  };
+
   return (
     <div className={styles.fileSelector}>
       {/* Hero Section */}
@@ -52,7 +64,9 @@ export const FileSelector = ({
 
           <div className={styles.buttonGroup}>
             <button
-              className={cn(styles.button, styles.buttonPrimary, styles.buttonRow)}
+              className={cn(styles.button, styles.buttonPrimary, styles.buttonRow, {
+                [styles.textDisabled]: isLoadingDirectory || !isApiAvailable,
+              })}
               onClick={onSelectDirectory}
               disabled={isLoadingDirectory || !isApiAvailable}
             >
@@ -78,31 +92,41 @@ export const FileSelector = ({
         </div>
       </main>
 
-      <Activity mode={!isApiAvailable ? 'visible' : 'hidden'}>
+      {!isApiAvailable && (
         <div
           className={cn(
             styles.apiPill,
             isApiAvailable ? styles.apiAvailable : styles.apiUnavailable,
           )}
-          title={
-            isApiAvailable
-              ? 'File System Access API is available'
-              : 'File System Access API is not available in this browser. Try using Chrome, Edge, or Opera with the feature enabled in browser settings.'
-          }
+          title="'File System Access API is not available in this browser. Try using Chrome, Edge, or Opera with the feature enabled in browser settings.'"
         >
           <div>
             <span className={styles.apiDot}></span>
-            <span className={styles.apiText}>
-              {isApiAvailable ? 'File System Access API' : 'File System Access API Unavailable'}
-            </span>
+            <span className={styles.apiText}>File System Access API Unavailable</span>
           </div>
-          {!isApiAvailable && (
-            <span className={styles.apiNote}>
-              Enable in browser settings for full folder access
-            </span>
-          )}
+
+          {(() => {
+            const flagUrl = getFileSystemAccessFlagUrl();
+            return (
+              <>
+                <span className={styles.apiNote}>
+                  {flagUrl
+                    ? 'Kindly Copy the below URL and open in a new tab to enable it'
+                    : 'Enable in browser settings for full folder access'}
+                </span>
+                {typeof flagUrl === 'string' && (
+                  <button
+                    onClick={() => handleCopyFlagUrl(flagUrl)}
+                    className={cn(styles.copyButton, copied && styles.copied)}
+                  >
+                    {copied ? 'Copied!' : 'Copy URL'}
+                  </button>
+                )}
+              </>
+            );
+          })()}
         </div>
-      </Activity>
+      )}
     </div>
   );
 };
