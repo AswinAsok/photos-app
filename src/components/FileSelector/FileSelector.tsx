@@ -1,10 +1,12 @@
 // FileSelector component following Single Responsibility Principle
+// Responsibility: Handle file and directory selection UI
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { MoonLoader } from 'react-spinners';
 import styles from './FileSelector.module.css';
 import { cn } from '../../utils/cn';
-import { getFileSystemAccessFlagUrl } from '../../utils/flags';
+import { useFileSystemAPI } from '../../hooks/useFileSystemAPI';
+import { ApiAvailabilityAlert } from '../ApiAvailabilityAlert/ApiAvailabilityAlert';
 
 interface FileSelectorProps {
   onSelectDirectory: () => void;
@@ -18,13 +20,7 @@ export const FileSelector = ({
   isLoadingDirectory,
 }: FileSelectorProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isApiAvailable, setIsApiAvailable] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    // Check if File System Access API is available
-    setIsApiAvailable('showDirectoryPicker' in window);
-  }, []);
+  const isApiAvailable = useFileSystemAPI();
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSelectFiles(e.target.files);
@@ -36,16 +32,6 @@ export const FileSelector = ({
 
   const handleSelectFilesClick = () => {
     fileInputRef.current?.click();
-  };
-
-  const handleCopyFlagUrl = async (url: string) => {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy URL:', err);
-    }
   };
 
   return (
@@ -92,41 +78,7 @@ export const FileSelector = ({
         </div>
       </main>
 
-      {!isApiAvailable && (
-        <div
-          className={cn(
-            styles.apiPill,
-            isApiAvailable ? styles.apiAvailable : styles.apiUnavailable,
-          )}
-          title="'File System Access API is not available in this browser. Try using Chrome, Edge, or Opera with the feature enabled in browser settings.'"
-        >
-          <div>
-            <span className={styles.apiDot}></span>
-            <span className={styles.apiText}>File System Access API Unavailable</span>
-          </div>
-
-          {(() => {
-            const flagUrl = getFileSystemAccessFlagUrl();
-            return (
-              <>
-                <span className={styles.apiNote}>
-                  {flagUrl
-                    ? 'Kindly Copy the below URL and open in a new tab to enable it'
-                    : 'Enable in browser settings for full folder access'}
-                </span>
-                {typeof flagUrl === 'string' && (
-                  <button
-                    onClick={() => handleCopyFlagUrl(flagUrl)}
-                    className={cn(styles.copyButton, copied && styles.copied)}
-                  >
-                    {copied ? 'Copied!' : 'Copy URL'}
-                  </button>
-                )}
-              </>
-            );
-          })()}
-        </div>
-      )}
+      <ApiAvailabilityAlert isApiAvailable={isApiAvailable} />
     </div>
   );
 };
