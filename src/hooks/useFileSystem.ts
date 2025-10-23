@@ -12,29 +12,10 @@ export interface LoadingProgress {
   isLoading: boolean;
 }
 
-const BATCH_SIZE = 5000;
-
 export const useFileSystem = () => {
   const [photos, setPhotos] = useState<PhotoFile[]>([]);
   const [folders, setFolders] = useState<FolderWithPhotos[]>([]);
   const [isLoadingDirectory, setIsLoadingDirectory] = useState(false);
-
-  const processBatches = useCallback(async (imageFiles: File[]) => {
-    const allPhotoFiles: PhotoFile[] = [];
-
-    // Process images in batches
-    for (let i = 0; i < imageFiles.length; i += BATCH_SIZE) {
-      const batch = imageFiles.slice(i, i + BATCH_SIZE);
-      const batchPhotos = await Promise.all(batch.map((file) => createPhotoFile(file)));
-
-      allPhotoFiles.push(...batchPhotos);
-
-      // Update photos state incrementally to show progress
-      setPhotos((prev) => [...prev, ...batchPhotos]);
-    }
-
-    return allPhotoFiles;
-  }, []);
 
   // Recursively scan directories and collect files organized by folder
   const scanDirectoryRecursive = useCallback(
@@ -71,14 +52,6 @@ export const useFileSystem = () => {
 
   const selectDirectory = useCallback(async () => {
     try {
-      // Check if File System Access API is supported
-      if (!('showDirectoryPicker' in window)) {
-        toast.error(
-          'Your browser does not support the File System Access API. Please use Chrome, Edge, or a compatible browser.',
-        );
-        return;
-      }
-
       setIsLoadingDirectory(true);
       const dirHandle = await window.showDirectoryPicker();
 
@@ -161,8 +134,9 @@ export const useFileSystem = () => {
         // Clear photos before loading new ones
         setPhotos([]);
 
-        // Process images in batches
-        const photoFiles = await processBatches(imageFiles);
+        // Process images
+        const photoFiles = await Promise.all(imageFiles.map((file) => createPhotoFile(file)));
+        setPhotos(photoFiles);
 
         toast.success(`Loaded ${photoFiles.length} image${photoFiles.length > 1 ? 's' : ''}`);
       } catch (error) {
@@ -170,7 +144,7 @@ export const useFileSystem = () => {
         toast.error('Failed to load files');
       }
     },
-    [photos, processBatches],
+    [photos],
   );
 
   const clearPhotos = useCallback(() => {
