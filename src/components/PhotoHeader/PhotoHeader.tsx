@@ -18,7 +18,6 @@ export interface PhotoHeaderProps {
  */
 export const PhotoHeader = memo(
   ({ photoCount, folderCount, onClearPhotos, folders, onFolderClick }: PhotoHeaderProps) => {
-    // Generate title text
     const title = (() => {
       const photoText = `${photoCount} Photo${photoCount !== 1 ? 's' : ''}`;
       if (folderCount && folderCount > 0) {

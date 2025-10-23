@@ -63,6 +63,7 @@
   .breadcrumb {
     font-size: var(--text-xs);
     gap: var(--space-1);
+    margin-left: 0;
   }
 
   .breadcrumbItem {
