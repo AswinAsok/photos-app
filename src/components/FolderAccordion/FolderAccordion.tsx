@@ -1,5 +1,6 @@
 import type { FolderWithPhotos } from '../../types';
 import styles from './FolderAccordion.module.css';
+import { IoChevronDown, IoChevronForward } from 'react-icons/io5';
 
 interface FolderAccordionProps {
   folder: FolderWithPhotos;
@@ -15,7 +16,9 @@ export const FolderAccordion = ({ folder, onToggle, children }: FolderAccordionP
   return (
     <div className={styles.accordionContainer}>
       <button className={styles.accordionHeader} onClick={handleToggle}>
-        <span className={styles.accordionIcon}>{folder.isExpanded ? '▼' : '▶'}</span>
+        <span className={styles.accordionIcon}>
+          {folder.isExpanded ? <IoChevronDown size={16} /> : <IoChevronForward size={16} />}
+        </span>
         <h2 className={styles.accordionTitle}>
           {folder.name}
           <span className={styles.photoCount}>({folder.photos.length} photos)</span>

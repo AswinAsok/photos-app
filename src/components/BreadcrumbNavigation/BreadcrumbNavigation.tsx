@@ -2,6 +2,7 @@ import type { FolderWithPhotos } from '../../types';
 import { parseFolderPath } from '../../utils';
 import styles from './BreadcrumbNavigation.module.css';
 import { FaChevronRight } from 'react-icons/fa';
+import { IoChevronForward } from 'react-icons/io5';
 
 export interface BreadcrumbNavigationProps {
   folders: FolderWithPhotos[];
@@ -28,7 +29,11 @@ export const BreadcrumbNavigation = ({ folders, onFolderClick }: BreadcrumbNavig
 
             {pathParts.map((part, partIndex) => (
               <div key={`${folder.path}-${partIndex}`} className={styles.pathSegment}>
-                {partIndex > 0 && <span className={styles.pathSeparator}>›</span>}
+                {partIndex > 0 && (
+                  <span className={styles.pathSeparator}>
+                    <IoChevronForward size={12} />
+                  </span>
+                )}
 
                 <button
                   className={styles.breadcrumbItem}

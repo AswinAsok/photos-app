@@ -7,6 +7,7 @@ import { getPhotoMetadata } from '../../utils/fileUtils';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import styles from './PhotoViewer.module.css';
 import { cn } from '../../utils/cn';
+import { IoClose, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 
 interface PhotoViewerProps {
   photos: PhotoFile[];
@@ -49,7 +50,7 @@ export const PhotoViewer = ({ photos, currentIndex, onClose }: PhotoViewerProps)
   return (
     <div className={styles.viewer} onClick={handleBackdropClick}>
       <button className={styles.closeButton} onClick={onClose} title='Close (Esc)'>
-        ✕
+        <IoClose size={24} />
       </button>
 
       <button
@@ -57,7 +58,7 @@ export const PhotoViewer = ({ photos, currentIndex, onClose }: PhotoViewerProps)
         onClick={navigatePrev}
         title='Previous (←)'
       >
-        ‹
+        <IoChevronBack size={28} style={{ marginRight: '2.5px' }} />
       </button>
 
       <button
@@ -65,16 +66,12 @@ export const PhotoViewer = ({ photos, currentIndex, onClose }: PhotoViewerProps)
         onClick={navigateNext}
         title='Next (→)'
       >
-        ›
+        <IoChevronForward size={28} style={{ marginLeft: '2.5px' }} />
       </button>
 
       <div className={styles.imageContainer}>
         <img src={currentPhoto.url} alt={currentPhoto.name} className={styles.image} />
       </div>
-
-      <button className={styles.infoButton} onClick={toggleMetadata} title='Toggle metadata (I)'>
-        i
-      </button>
 
       {showMetadata && (
         <div className={styles.metadata}>
@@ -115,9 +112,8 @@ export const PhotoViewer = ({ photos, currentIndex, onClose }: PhotoViewerProps)
           </div>
 
           <div className={styles.keyboardHints}>
-            <span>← → Navigate</span>
             <span>ESC Close</span>
-            <span>I Toggle info</span>
+            <span>I Toggle Info</span>
           </div>
         </div>
       )}

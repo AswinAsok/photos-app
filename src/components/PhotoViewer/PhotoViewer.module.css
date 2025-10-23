@@ -36,7 +36,6 @@
   justify-content: center;
   transition: all var(--duration-300) var(--ease-in-out);
   z-index: 1002;
-  backdrop-filter: blur(10px);
 }
 
 .closeButton:hover {
@@ -59,7 +58,6 @@
   justify-content: center;
   transition: all var(--duration-300) var(--ease-in-out);
   z-index: 1002;
-  backdrop-filter: blur(10px);
 }
 
 .navButton:hover {
@@ -103,30 +101,6 @@
   }
 }
 
-.infoButton {
-  position: fixed;
-  bottom: var(--space-6);
-  right: var(--space-6);
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--primary-white);
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--duration-300) var(--ease-in-out);
-  z-index: 1002;
-  backdrop-filter: blur(10px);
-}
-
-.infoButton:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
-}
-
 .metadata {
   position: fixed;
   bottom: var(--space-6);
@@ -136,7 +110,6 @@
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   z-index: 1002;
-  backdrop-filter: blur(10px);
   box-shadow: var(--shadow-2xl);
   animation: slideUp var(--duration-300) var(--ease-in-out);
 }
@@ -215,42 +188,81 @@
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-  .closeButton,
-  .infoButton {
-    width: 40px;
-    height: 40px;
-    font-size: var(--text-xl);
+  .closeButton {
+    width: 36px;
+    height: 36px;
+    font-size: var(--text-lg);
+    top: var(--space-3);
+    right: var(--space-3);
   }
 
   .navButton {
-    width: 50px;
-    height: 50px;
-    font-size: var(--text-4xl);
+    width: 44px;
+    height: 44px;
+    font-size: var(--text-3xl);
   }
 
   .prevButton {
-    left: var(--space-4);
+    left: var(--space-2);
   }
 
   .nextButton {
-    right: var(--space-4);
+    right: var(--space-2);
+  }
+
+  .imageContainer {
+    max-width: 95%;
+    max-height: 70vh;
+  }
+
+  .image {
+    max-height: 70vh;
   }
 
   .metadata {
-    max-width: calc(100% - var(--space-12));
-    padding: var(--space-4);
+    max-width: calc(100% - var(--space-6));
+    max-height: 40vh;
+    width: 100%;
+    overflow-y: auto;
+    padding: var(--space-3);
+    left: var(--space-3);
+    bottom: var(--space-3);
+  }
+
+  .metadataHeader {
+    margin-bottom: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+
+  .metadataTitle {
+    font-size: var(--text-base);
+  }
+
+  .imageCounter {
+    font-size: var(--text-xs);
+  }
+
+  .metadataContent {
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
   }
 
   .metadataLabel {
-    min-width: 70px;
-    font-size: var(--text-sm);
+    min-width: 65px;
+    font-size: var(--text-xs);
   }
 
   .metadataValue {
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
   }
 
   .keyboardHints {
-    font-size: var(--text-xs);
+    font-size: 10px;
+    gap: var(--space-2);
+    padding-top: var(--space-2);
+  }
+
+  .keyboardHints span {
+    padding: 2px var(--space-1);
   }
 }
